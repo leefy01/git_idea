@@ -1,0 +1,62 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'org.akhikhl.gretty'
+
+group 'com.qbao'
+version '1.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.akhikhl.gretty:gretty:2.0.0'
+    }
+}
+if (!project.plugins.findPlugin(org.akhikhl.gretty.GrettyPlugin))
+    project.apply(plugin: org.akhikhl.gretty.GrettyPlugin)
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    providedCompile(
+            'javax.servlet:javax.servlet-api:3.1.0'
+    )
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+}
+
+gretty {
+    httpEnabled = true
+    servletContainer = 'tomcat8'
+    contextPath = '/mygretty'
+    host = 'localhost'
+    httpPort = 8080
+    scanInterval = 1
+    fastReload = true
+    inplaceMode = 'soft'
+    loggingLevel = 'info'
+    consoleLogEnabled = true
+    debugPort = 10012
+    debugSuspend = true
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+[compileJava, javadoc, compileTestJava]*.options*.encoding = "UTF-8"
